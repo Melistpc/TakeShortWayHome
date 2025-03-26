@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// A graph
@@ -77,11 +78,13 @@ public class Graph<T>
         if (Find(value) != null)
         {
             // duplicate value
+            Debug.Log($"Node already exists: {value}");
             return false;
         }
         else
         {
             nodes.Add(new GraphNode<T>(value));
+            Debug.Log($"Added node: {value}");
             return true;
         }
     }
@@ -162,4 +165,7 @@ public class Graph<T>
     }
 
     #endregion
+
+
+  
 }

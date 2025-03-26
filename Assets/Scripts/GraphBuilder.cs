@@ -36,20 +36,36 @@ public class GraphBuilder : MonoBehaviour
     /// </summary>
     public void Awake()
     {
+        if (graph == null)
+        {
+            Debug.Log("Graph is null");
+            graph = new Graph<Waypoint>();
+        }
+        
+        //GraphNode<Waypoint> myStartNode;
+        Waypoint myStartNode = new Waypoint();
+        myStartNode= GameObject.FindGameObjectWithTag("Start").GetComponent<Waypoint>();
         
         // add nodes (all waypoints, including start and end) to graph
-       var mystart=GameObject.FindGameObjectWithTag("Start");
-       var myend=GameObject.FindGameObjectWithTag("End");
-       var myother=GameObject.FindGameObjectsWithTag("Waypoint");
-       var startId=mystart.GetComponentInChildren<Waypoint>().Id;
-       var endId=myend.GetComponentInChildren<Waypoint>().Id;
+      // var mystart=GameObject.FindGameObjectWithTag("Start");
+      Waypoint myEndNode = new Waypoint();
+      myEndNode= GameObject.FindGameObjectWithTag("End").GetComponent<Waypoint>();
+      var wayPointsOther=GameObject.FindGameObjectsWithTag("Waypoint");
+     
+   
 
-      
+       graph.AddNode(myStartNode);
+      graph.AddNode(myEndNode);
+      Debug.Log("My node list"+graph.Nodes+" count "+graph.Count);
+   
       
 
 
        // add neighbors to each node in graph
     }
+
+
+
 
     /// <summary>
     /// Gets and sets the graph
