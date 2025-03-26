@@ -41,30 +41,33 @@ public class GraphBuilder : MonoBehaviour
             Debug.Log("Graph is null");
             graph = new Graph<Waypoint>();
         }
-        
-        //GraphNode<Waypoint> myStartNode;
+
+
         Waypoint myStartNode = new Waypoint();
-        myStartNode= GameObject.FindGameObjectWithTag("Start").GetComponent<Waypoint>();
-        
+        myStartNode = GameObject.FindGameObjectWithTag("Start").GetComponent<Waypoint>();
+
         // add nodes (all waypoints, including start and end) to graph
-      // var mystart=GameObject.FindGameObjectWithTag("Start");
-      Waypoint myEndNode = new Waypoint();
-      myEndNode= GameObject.FindGameObjectWithTag("End").GetComponent<Waypoint>();
-      var wayPointsOther=GameObject.FindGameObjectsWithTag("Waypoint");
-     
-   
 
-       graph.AddNode(myStartNode);
-      graph.AddNode(myEndNode);
-      Debug.Log("My node list"+graph.Nodes+" count "+graph.Count);
-   
-      
+        Waypoint myEndNode = new Waypoint();
+        myEndNode = GameObject.FindGameObjectWithTag("End").GetComponent<Waypoint>();
+
+        var wayPointsOther = GameObject.FindGameObjectsWithTag("Waypoint");
 
 
-       // add neighbors to each node in graph
+        graph.AddNode(myStartNode);
+
+        foreach (var waypoint in wayPointsOther)
+        {
+            Waypoint myOtherFlag = waypoint.GetComponent<Waypoint>();
+            graph.AddNode(myOtherFlag);
+        }
+
+        graph.AddNode(myEndNode);
+        Debug.Log("My node list" + graph.Nodes + " count " + graph.Count);
+
+
+        // add neighbors to each node in graph
     }
-
-
 
 
     /// <summary>
