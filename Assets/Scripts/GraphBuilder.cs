@@ -8,7 +8,7 @@ using UnityEngine;
 public class GraphBuilder : MonoBehaviour
 {
     static Graph<Waypoint> graph;
-    private Vector2 distance;
+
     #region Constructor
 
     // Uncomment the code below after copying this class into the console
@@ -36,7 +36,6 @@ public class GraphBuilder : MonoBehaviour
     /// </summary>
     public void Awake()
     {
-       
         if (graph == null)
         {
             Debug.Log("Graph is null");
@@ -61,7 +60,6 @@ public class GraphBuilder : MonoBehaviour
         {
             Waypoint myOtherFlag = waypoint.GetComponent<Waypoint>();
             graph.AddNode(myOtherFlag);
-           
         }
 
         graph.AddNode(myEndNode);
@@ -74,34 +72,27 @@ public class GraphBuilder : MonoBehaviour
             CheckNodesDistance(node);
 //            node.AddNeighbor(node,node.GetEdgeWeight(node));
         }
-        
     }
 
     private void CheckNodesDistance(GraphNode<Waypoint> node)
     {
         foreach (GraphNode<Waypoint> node2 in graph.Nodes)
         {
-     
-            CalcDistance(node,node2);
-            if (node != node2 && Mathf.Abs(distance.x)<=3.5 && Mathf.Abs(distance.y)<=3.0 )
+            Vector2 distance = GetDistance(node, node2);
+            if (node != node2 && Mathf.Abs(distance.x) <= 3.5 && Mathf.Abs(distance.y) <= 3.0)
             {
-               // node.AddNeighbor(node2,node2.GetEdgeWeight(node2));
-               node.AddNeighbor(node2,distance.magnitude);
-                
+                // node.AddNeighbor(node2,node2.GetEdgeWeight(node2));
+                node.AddNeighbor(node2, distance.magnitude);
             }
-           
         }
-        
     }
 
-    private Vector2 CalcDistance(GraphNode<Waypoint> node, GraphNode<Waypoint> node2)
+    private Vector2 GetDistance(GraphNode<Waypoint> node, GraphNode<Waypoint> node2)
     {
         Vector2 currentNodePos = node.Value.Position;
         Vector2 otherNodePos = node2.Value.Position;
-        Vector2 distance =  new Vector2((currentNodePos.x- otherNodePos.y), (currentNodePos.y- otherNodePos.y));
-        return distance;
+        return new Vector2((currentNodePos.x - otherNodePos.x), (currentNodePos.y - otherNodePos.y));
     }
-
 
     /// <summary>
     /// Gets and sets the graph
