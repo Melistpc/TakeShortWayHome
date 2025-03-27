@@ -81,7 +81,6 @@ public class GraphBuilder : MonoBehaviour
             Vector2 distance = GetDistance(node, node2);
             if (node != node2 && Mathf.Abs(distance.x) <= 3.5 && Mathf.Abs(distance.y) <= 3.0)
             {
-                // node.AddNeighbor(node2,node2.GetEdgeWeight(node2));
                 node.AddNeighbor(node2, distance.magnitude);
             }
         }
