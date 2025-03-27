@@ -13,8 +13,6 @@ public class SortedLinkedList<T> : LinkedList<T> where T : IComparable
 
     LinkedList<T> listOfNodes = new LinkedList<T>();
     private T data;
-    private LinkedListNode<T> headNode = null;
- 
     private LinkedListNode<T> currentNode;
 
 
@@ -32,26 +30,21 @@ public class SortedLinkedList<T> : LinkedList<T> where T : IComparable
     /// <param name="item">item to add to list</param>
     public void Add(T item)
     {
-        if (headNode == null)
+        //if contains i ekle buraya
+        if (listOfNodes.Contains(item))
         {
-            headNode = new LinkedListNode<T>(item);
-            headNode.Value = item;
-            AddFirst(headNode);
-            
-           
+            return;
         }
 
-        if (currentNode != null && currentNode.Value.CompareTo(item) < 0) //  current itemden önce geliyosa
+        if (currentNode == null)
         {
-             LinkedListNode<T> previousNode= currentNode;
-             currentNode = currentNode.Next;
-             currentNode.Value = item;
-             
+            currentNode = AddLast(item);
+            return;
         }
-        else if (currentNode == null)
 
+        if (currentNode.Value.CompareTo(item) < 0) //  current itemden önce geliyosa
         {
-            AddLast(item);
+            currentNode = AddLast(item);
         }
         else
         {
@@ -70,32 +63,15 @@ public class SortedLinkedList<T> : LinkedList<T> where T : IComparable
     /// </summary>
     public void Reposition(T item)
     {
-        LinkedListNode<T> newItemNode = new LinkedListNode<T>(item);
-        LinkedListNode<T> traversenextNode;
-        newItemNode =listOfNodes.First;
-       
-        if (!listOfNodes.Contains(item))
-            
-        {
-                traversenextNode =newItemNode.Next;
-                while (newItemNode.Value.CompareTo(traversenextNode) <= 0)//newıtem traverse den önce ise
-                {
-                    newItemNode =traversenextNode;
-                    traversenextNode = traversenextNode.Next;
-                }
+        var newItemNode = new LinkedListNode<T>(item);
+        var traverseNextNode = First;
 
-                if (traversenextNode == null)
-                {
-                    AddLast(newItemNode);
-                }
-                else
-                {
-                    AddBefore(newItemNode,item);
-                }
-              
+        while (newItemNode.Value.CompareTo(traverseNextNode) <= 0) //newıtem traverse den önce ise
+        {
+            traverseNextNode = traverseNextNode.Next;
         }
 
-        // add your code here
+        AddBefore(newItemNode, item);
     }
 
     #endregion
