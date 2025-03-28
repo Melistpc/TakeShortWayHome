@@ -213,10 +213,10 @@ public class Traveler : MonoBehaviour
                 // of the edge from the current graph node to the current 
                 // neighbor in a variable
 
-                float distance = currentGraphNode.Distance + currentGraphNode.GetEdgeWeight(neighborNode);
+                float distance = currentGraphNode + currentGraphNode.GetEdgeWeight(neighborNode);
                 // Retrieve the neighor search node from the dictionary
                 // using the neighbor graph node
-                SearchNode<Waypoint> neighborSearchNode = searchList.Find(neighborNode);
+                SearchNode<Waypoint> neighborSearchNode = nodeDictionary[neighborNode];
 
                 // If the distance you just calculated is less than the 
                 // current distance for the neighbor search node
