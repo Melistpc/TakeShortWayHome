@@ -64,11 +64,21 @@ public class Traveler : MonoBehaviour
     /// 
     /// Note: Leave this method public to support automated grading
     /// </summary>
+    private Rigidbody2D rigidbody2D;
+
+    public GraphNode<Waypoint> myStartNode;
+
     public void Start()
     {
-       
-    
+       // MoveToStart(startNode);
+        GetComponent<Rigidbody2D>();
     }
+
+ /*   private void MoveToStart(GraphNode<Waypoint> graphNode)
+    {
+        gameObject.transform.position = graphNode.position;
+        rigidbody2D.velocity = Vector2.zero;
+    }*/
 
     #endregion
 
@@ -110,126 +120,132 @@ public class Traveler : MonoBehaviour
         // with Waypoint. I also provided a SortedLinkedList class)
         SortedLinkedList<SearchNode<Waypoint>> searchList = new SortedLinkedList<SearchNode<Waypoint>>();
 
-        Dictionary<GraphNode<Waypoint>, SearchNode<Waypoint>> nodeDictionary = new Dictionary<GraphNode<Waypoint>, SearchNode<Waypoint>>();
+        Dictionary<GraphNode<Waypoint>, SearchNode<Waypoint>> nodeDictionary =
+            new Dictionary<GraphNode<Waypoint>, SearchNode<Waypoint>>();
         // Create a dictionary of search nodes keyed by the corresponding 
         // graph node. This dictionary gives us a very fast way to determine 
         // if the search node corresponding to a graph node is still in the 
         // search list
 
-        public GraphNode<Waypoint> startNode = graph.Find(start);
+        GraphNode<Waypoint> startNode = graph.Find(start);
+        GraphNode<Waypoint> endNode = graph.Find(end);
 
-        public GraphNode<Waypoint> endNode = graph.Find(end);
+        // Save references to the start and end graph nodes in variables
 
-            // Save references to the start and end graph nodes in variables
+        // for each graph node in the graph
 
-            // for each graph node in the graph
-            
-            // Create a search node for the graph node (the constructor I 
-            // provided in the SearchNode class initializes distance to the max
-            // float value and previous to null)
+        // Create a search node for the graph node (the constructor I 
+        // provided in the SearchNode class initializes distance to the max
+        // float value and previous to null)
+
+        foreach (GraphNode<Waypoint> node in graph.Nodes)
+        {
+            // If the graph node is the start node
+
+            // Set the distance for the search node to 0
+
+
+            SearchNode<Waypoint> searchNode =  new SearchNode<Waypoint>(node);
+            if (node.Value == startNode.Value)
+            {
+                searchNode.Distance = 0;
+            }
+
             // Add the search node to the search list 
-            foreach(GraphNode<Waypoint> node in graph.Nodes)
+            // Add the search node to the dictionary keyed by the graph node
+
+
+            searchList.Add(searchNode);
+            nodeDictionary.Add(node, searchNode);
+            // While the search list isn't empty
+
+            while (searchList.Count != 0)
             {
-                // If the graph node is the start node
+                // Save a reference to the current search node (the first search 
+                // node in the search list) in a variable. We do this because the
+                // front of the search list has the smallest distance
+                // Remove the first search node from the search list
+                SearchNode<Waypoint> currentSearchNode = searchList.First.Value;
+                searchList.RemoveFirst();
+                // Save a reference to the current graph node for the current search
+                // node in a variable
 
-                // Set the distance for the search node to 0
+                //---------------buraya
+                GraphNode<Waypoint> currentGraphNode = currentSearchNode.GraphNode;
 
-               
-                SearchNode<Waypoint> searchNode = new SearchNode<Waypoint>(node);
-                if (searchNode == startNode.Value)
+                // Remove the search node from the dictionary (because it's no 
+                // longer in the search list)
+
+                searchList.Remove(searchNode);
+
+                // If the current graph node is the end node
+
+
+                if (currentGraphNode.Value == endNode.Value)
                 {
-                    searchNode.Distance = 0;
+                    // Display the distance for the current search node as the path 
+                    // length in the scene (Hint: I used the HUD and the event 
+                    // system to do this)
+                    print(currentSearchNode.Distance.ToString());
+                    // Return a linked list of the waypoints from the start node to 
+                    // the end node. Uncomment the line of code below, replacing
+                    // the argument with the name of your current search node
+                    // variable; you MUST do this for the autograder to work
+                    //   return BuildWaypointPath(currentSearchNode);
+
+                    return BuildWaypointPath(currentSearchNode);
                 }
-
-                // Add the search node to the search list 
-                // Add the search node to the dictionary keyed by the graph node
-
-
-                searchList.Add(searchNode);
-                nodePathDictionary.Add(node, searchNode);
-                // While the search list isn't empty
-
-                while (!searchList.Count == 0)
-                {
-                    // Save a reference to the current search node (the first search 
-                    // node in the search list) in a variable. We do this because the
-                    // front of the search list has the smallest distance
-                    // Remove the first search node from the search list
-                    SearchNode<Waypoint> currentSearchNode = new SearchNode<Waypoint>(searchList.First.Value);
-                    searchList.RemoveFirst();
-                    // Save a reference to the current graph node for the current search
-                    // node in a variable
-
-                    GraphNode<Waypoint> currentGraphNode = new GraphNode<Waypoint>(node);
-
-                    // Remove the search node from the dictionary (because it's no 
-                    // longer in the search list)
-
-                    searchList.Remove(currentSearchNode);
-
-                    // If the current graph node is the end node
-
-
-                    if (currentGraphNode.Value == endNode.Value)
-                    {
-                        // Display the distance for the current search node as the path 
-                        // length in the scene (Hint: I used the HUD and the event 
-                        // system to do this)
-                        print(currentSearchNode.Distance.ToString());
-                        // Return a linked list of the waypoints from the start node to 
-                        // the end node. Uncomment the line of code below, replacing
-                        // the argument with the name of your current search node
-                        // variable; you MUST do this for the autograder to work
-                        //   return BuildWaypointPath(currentSearchNode);
-
-                        return BuildWaypointPath(currentSearchNode);
-                    }
-            }
-           
-            // For each of the current graph node's neighbors
             
-            foreach (GraphNode<Waypoint> neighborNode in currentGraphNode.Neighbors)
+
+            // For each of the current graph node's neighbors
+        
+
+        foreach (GraphNode<Waypoint> neighborNode in currentGraphNode.Neighbors)
+        {
+            // If the neighbor is still in the search list (use the 
+            // dictionary to check this)
+
+            if (nodeDictionary.ContainsKey(neighborNode))
             {
-                // If the neighbor is still in the search list (use the 
-                // dictionary to check this)
+                Debug.Log("Inside dictionary");
+                continue;
+                // Save the distance for the current graph node + the weight 
+                // of the edge from the current graph node to the current 
+                // neighbor in a variable
 
-                if (nodePathDictionary.ContainsKey(neighborNode))
+                float distance = currentGraphNode.Distance + currentGraphNode.GetEdgeWeight(neighborNode);
+                // Retrieve the neighor search node from the dictionary
+                // using the neighbor graph node
+                SearchNode<Waypoint> neighborSearchNode = searchList.Find(neighborNode);
+
+                // If the distance you just calculated is less than the 
+                // current distance for the neighbor search node
+
+                if (distance < neighborSearchNode.Distance)
                 {
-                    Debug.Log("Inside dictionary");
-                    continue;
-                    // Save the distance for the current graph node + the weight 
-                    // of the edge from the current graph node to the current 
-                    // neighbor in a variable
+                    // Set the distance for the neighbor search node to 
+                    // the new distance
 
-                    float distance = currentGraphNode.Distance + currentGraphNode.GetEdgeWeight(neighborNode);
-                    // Retrieve the neighor search node from the dictionary
-                    // using the neighbor graph node
-                    SearchNode<Waypoint> neighborSearchNode = searchList[neighborNode];
-
-                    // If the distance you just calculated is less than the 
-                    // current distance for the neighbor search node
-
-                    if (distance < neighborSearchNode.Distance)
-                    {
-                        // Set the distance for the neighbor search node to 
-                        // the new distance
-
-                        neighborSearchNode.Distance = distance;
-                        // Set the previous node for the neighbor search node 
-                        // to the current search node
-                        neighborNode.Previous = currentGraphNode;
-                        // Tell the search list to Reposition the neighbor 
-                        // search node. We need to do this because the change 
-                        // to the distance for the neighbor search node could 
-                        // have moved it forward in the search list
-                        searchList.Reposition(neighborSearchNode);
-                    }
+                    neighborSearchNode.Distance = distance;
+                    // Set the previous node for the neighbor search node 
+                    // to the current search node
+                    
+                    neighborSearchNode.Previous = currentSearchNode;
+                    
+                    // Tell the search list to Reposition the neighbor 
+                    // search node. We need to do this because the change 
+                    // to the distance for the neighbor search node could 
+                    // have moved it forward in the search list
+                    
+                    searchList.Reposition(neighborSearchNode);
                 }
-               
             }
-            // didn't find a path from start to end nodes
-            return null;
-           
+        } 
+        }
+        }
+        // didn't find a path from start to end nodes
+        return null;
+
 
 // Create a search node for the graph node (the constructor I 
         // provided in the SearchNode class initializes distance to the max
@@ -237,7 +253,7 @@ public class Traveler : MonoBehaviour
 
 
         // didn't find a path from start to end nodes
-      //  return null;
+        //  return null;
     }
 
     #endregion
