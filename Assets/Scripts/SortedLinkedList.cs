@@ -63,15 +63,21 @@ public class SortedLinkedList<T> : LinkedList<T> where T : IComparable
     /// </summary>
     public void Reposition(T item)
     {
-        var newItemNode = new LinkedListNode<T>(item);
         var traverseNextNode = First;
 
-        while (newItemNode.Value.CompareTo(traverseNextNode) <= 0) //newıtem traverse den önce ise
+        while (traverseNextNode != null && item.CompareTo(traverseNextNode.Value) > 0)
         {
             traverseNextNode = traverseNextNode.Next;
         }
 
-        AddBefore(newItemNode, item);
+        if (traverseNextNode != null)
+        {
+            AddBefore(traverseNextNode, item);
+        }
+        else
+        {
+            AddLast(item);
+        }
     }
 
     #endregion

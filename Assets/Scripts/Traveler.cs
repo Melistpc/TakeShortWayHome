@@ -312,6 +312,10 @@ public class Traveler : MonoBehaviour
 
     private void FollowPath(LinkedList<Waypoint> path)
     {
+        if (path != null && path.Count > 0)
+        {
+            
+      
         Waypoint target = path.First.Value;
         Vector2 targetpos = target.transform.position;
         float speed = 2f;
@@ -330,6 +334,7 @@ public class Traveler : MonoBehaviour
                 
                 
             }
+        }
         }
     }
 
