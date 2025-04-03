@@ -11,7 +11,7 @@ public class SortedLinkedList<T> : LinkedList<T> where T : IComparable
 {
     #region Constructor
 
-    LinkedList<T> listOfNodes = new LinkedList<T>();
+  
     private T data;
     private LinkedListNode<T> currentNode;
 
@@ -31,7 +31,7 @@ public class SortedLinkedList<T> : LinkedList<T> where T : IComparable
     public void Add(T item)
     {
         //if contains i ekle buraya
-        if (listOfNodes.Contains(item))
+        if (Contains(item))
         {
             return;
         }
