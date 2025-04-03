@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class GraphBuilder : MonoBehaviour
 {
-    static Graph<Waypoint> graph;
+     static Graph<Waypoint> graph;
 
     #region Constructor
 
@@ -34,10 +35,12 @@ public class GraphBuilder : MonoBehaviour
     ///
     /// Note: Leave this method public to support automated grading
     /// </summary>
+    private Traveler traveler;
     public void Awake()
     {
         if (graph == null)
         {
+            traveler = FindObjectOfType<Traveler>();
             Debug.Log("Graph is null");
             graph = new Graph<Waypoint>();
         }
@@ -72,7 +75,12 @@ public class GraphBuilder : MonoBehaviour
             CheckNodesDistance(node);
 //            node.AddNeighbor(node,node.GetEdgeWeight(node));
         }
+        traveler.Search(myStartNode, myEndNode,graph);
+        
+        
     }
+
+   
 
     private void CheckNodesDistance(GraphNode<Waypoint> node)
     {

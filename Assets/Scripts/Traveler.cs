@@ -15,6 +15,7 @@ public class Traveler : MonoBehaviour
     float pathLength = 0;
 
     private LinkedList<Waypoint> path;
+
     // events fired by class
     PathFoundEvent pathFoundEvent = new PathFoundEvent();
     PathTraversalCompleteEvent pathTraversalCompleteEvent = new PathTraversalCompleteEvent();
@@ -67,19 +68,19 @@ public class Traveler : MonoBehaviour
     /// </summary>
     private Rigidbody2D rigidbody2D;
 
-    public GraphNode<Waypoint> myStartNode;
-
     public void Start()
     {
-       // Search();
-        MoveToStart();
-        GetComponent<Rigidbody2D>();
+        if (pathLength != 0)
+        {
+            MoveToStart();
+        }
+       
+        rigidbody2D=GetComponent<Rigidbody2D>();
     }
 
     private void MoveToStart()
     {
-        
-        rigidbody2D.velocity = Vector2.zero;
+       // rigidbody2D.velocity = Vector2.zero;
         FollowPath(path);
     }
 
@@ -148,7 +149,7 @@ public class Traveler : MonoBehaviour
             // Set the distance for the search node to 0
 
 
-            SearchNode<Waypoint> searchNode =  new SearchNode<Waypoint>(node);
+            SearchNode<Waypoint> searchNode = new SearchNode<Waypoint>(node);
             if (node.Value == startNode.Value)
             {
                 searchNode.Distance = 0;
@@ -198,54 +199,54 @@ public class Traveler : MonoBehaviour
 
                     return BuildWaypointPath(currentSearchNode);
                 }
-            
 
-            // For each of the current graph node's neighbors
-        
 
-        foreach (GraphNode<Waypoint> neighborNode in currentGraphNode.Neighbors)
-        {
-            // If the neighbor is still in the search list (use the 
-            // dictionary to check this)
+                // For each of the current graph node's neighbors
 
-            if (nodeDictionary.ContainsKey(neighborNode))
-            {
-                Debug.Log("Inside dictionary");
-                continue;
-                // Save the distance for the current graph node + the weight 
-                // of the edge from the current graph node to the current 
-                // neighbor in a variable
 
-                float distance = currentSearchNode.Distance + currentGraphNode.GetEdgeWeight(neighborNode);
-                // Retrieve the neighor search node from the dictionary
-                // using the neighbor graph node
-                SearchNode<Waypoint> neighborSearchNode = nodeDictionary[neighborNode];
-
-                // If the distance you just calculated is less than the 
-                // current distance for the neighbor search node
-
-                if (distance < neighborSearchNode.Distance)
+                foreach (GraphNode<Waypoint> neighborNode in currentGraphNode.Neighbors)
                 {
-                    // Set the distance for the neighbor search node to 
-                    // the new distance
+                    // If the neighbor is still in the search list (use the 
+                    // dictionary to check this)
 
-                    neighborSearchNode.Distance = distance;
-                    // Set the previous node for the neighbor search node 
-                    // to the current search node
-                    
-                    neighborSearchNode.Previous = currentSearchNode;
-                    
-                    // Tell the search list to Reposition the neighbor 
-                    // search node. We need to do this because the change 
-                    // to the distance for the neighbor search node could 
-                    // have moved it forward in the search list
-                    
-                    searchList.Reposition(neighborSearchNode);
+                    if (nodeDictionary.ContainsKey(neighborNode))
+                    {
+                        // Save the distance for the current graph node + the weight 
+                        // of the edge from the current graph node to the current 
+                        // neighbor in a variable
+
+                        float distance = currentSearchNode.Distance + currentGraphNode.GetEdgeWeight(neighborNode);
+                        // Retrieve the neighor search node from the dictionary
+                        // using the neighbor graph node
+                        SearchNode<Waypoint> neighborSearchNode = nodeDictionary[neighborNode];
+
+                        // If the distance you just calculated is less than the 
+                        // current distance for the neighbor search node
+
+                        if (distance < neighborSearchNode.Distance)
+                        {
+                            // Set the distance for the neighbor search node to 
+                            // the new distance
+
+                            neighborSearchNode.Distance = distance;
+                            // Set the previous node for the neighbor search node 
+                            // to the current search node
+
+                            neighborSearchNode.Previous = currentSearchNode;
+
+                            // Tell the search list to Reposition the neighbor 
+                            // search node. We need to do this because the change 
+                            // to the distance for the neighbor search node could 
+                            // have moved it forward in the search list
+
+                            searchList.Reposition(neighborSearchNode);
+                            pathFoundEvent.Invoke(distance);
+                        }
+                    }
                 }
             }
-        } 
         }
-        }
+
         // didn't find a path from start to end nodes
         return null;
 
@@ -283,34 +284,53 @@ public class Traveler : MonoBehaviour
             previous = previous.Previous;
         }
 
+         ExplodeFlags(path);
         return path;
     }
 
+    private void ExplodeFlags(LinkedList<Waypoint> path)
+    {
+       
+        Explosion explosionPrefab = Resources.Load<Explosion>("Explosion");
+   
+        var current = path.First?.Next;
+        var last = path.Last;
 
-    private LinkedList<Waypoint> FollowPath( LinkedList<Waypoint> path){
-          
-         Waypoint target=path.First.Value;
-         Vector2 targetpos=target.transform.position;
-         float speed=2f;
-           rigidbody2D.MovePosition(Vector2.MoveTowards(transform.position, targetpos, speed * Time.deltaTime)); 
-         if (Vector2.Distance(transform.position, targetpos) < 0.1f)
-            {
-                
-                path.RemoveFirst();
+        while (current != null && current != last)
+        {
+            Waypoint flag = current.Value;
 
-                
-                target.GetComponent<SpriteRenderer>().color = Color.green;
-
+            Explosion explosion = Instantiate(explosionPrefab, flag.transform.position, Quaternion.identity);
             
-                if (path.Count == 0)
-                {
-                    pathTraversalCompleteEvent.Invoke(); 
-                }
+            Destroy(flag.gameObject);
+
+            current = current.Next;
+        }
+    }
+
+
+
+    private void FollowPath(LinkedList<Waypoint> path)
+    {
+        Waypoint target = path.First.Value;
+        Vector2 targetpos = target.transform.position;
+        float speed = 2f;
+        rigidbody2D.MovePosition(Vector2.MoveTowards(transform.position, targetpos, speed * Time.deltaTime));
+        if (Vector2.Distance(transform.position, targetpos) < 0.1f)
+        {
+            path.RemoveFirst();
+
+
+            target.GetComponent<SpriteRenderer>().color = Color.green;
+
+
+            if (path.Count == 0)
+            {
+                pathTraversalCompleteEvent.Invoke();
+                
+                
             }
-
-
-
-         return path;
+        }
     }
 
     #endregion
