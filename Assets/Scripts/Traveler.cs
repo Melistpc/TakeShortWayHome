@@ -75,6 +75,7 @@ public class Traveler : MonoBehaviour
     public void Start()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
+      
     }
 
 
@@ -82,8 +83,11 @@ public class Traveler : MonoBehaviour
     {
         if (path != null && IsMoving == false)
         {
+            Debug.Log("Moving to the start");
             IsMoving = true;
-            FollowPath(path);
+           // FollowPath(path);
+           StartCoroutine(FollowPath(path));
+
         }
     }
 
@@ -183,7 +187,9 @@ public class Traveler : MonoBehaviour
                 // Remove the search node from the dictionary (because it's no 
                 // longer in the search list)
 
-                searchList.Remove(searchNode);
+               // searchList.Remove(searchNode);
+                nodeDictionary.Remove(currentGraphNode);
+
 
                 // If the current graph node is the end node
 
@@ -209,7 +215,7 @@ public class Traveler : MonoBehaviour
 
                 foreach (GraphNode<Waypoint> neighborNode in currentGraphNode.Neighbors)
                 {
-                    Debug.Log("check neightbor "+ neighborNode.Value);
+                   
                     // If the neighbor is still in the search list (use the 
                     // dictionary to check this)
 
@@ -253,15 +259,7 @@ public class Traveler : MonoBehaviour
 
         // didn't find a path from start to end nodes
         return null;
-
-
-// Create a search node for the graph node (the constructor I 
-        // provided in the SearchNode class initializes distance to the max
-        // float value and previous to null)
-
-
-        // didn't find a path from start to end nodes
-        //  return null;
+        
     }
 
     #endregion
@@ -291,6 +289,7 @@ public class Traveler : MonoBehaviour
         ExplodeFlags(path);
         print(path.Count);
         Debug.Log("path is"+path);
+        MoveToStart();
         return path;
     }
 
@@ -314,33 +313,33 @@ public class Traveler : MonoBehaviour
     }
 
 
-    private void FollowPath(LinkedList<Waypoint> path)
+    private IEnumerator FollowPath(LinkedList<Waypoint> path)
     {
-        if (path != null && IsMoving == true)
+        Debug.Log("Following path is" + path);
+        IsMoving = true;
+
+        while (path.Count > 0)
         {
-            while (path.Count > 0)
+            Waypoint target = path.First.Value;
+            Vector2 targetPos = target.transform.position;
+            float speed = 40f;
+
+            while (Vector2.Distance(rigidbody2D.position, targetPos) > 0.1f)
             {
-                Waypoint target = path.First.Value;
-                Vector2 targetpos = target.transform.position;
-                float speed = 2f;
-                rigidbody2D.MovePosition(Vector2.MoveTowards(transform.position, targetpos, speed * Time.deltaTime));
-                if (Vector2.Distance(transform.position, targetpos) < 0.1f)
-                {
-                    path.RemoveFirst();
-
-
-                    target.GetComponent<SpriteRenderer>().color = Color.green;
-
-
-                   
-                }
+                rigidbody2D.MovePosition(Vector2.MoveTowards(rigidbody2D.position, targetPos, speed * Time.deltaTime));
+              
+                yield return new WaitForFixedUpdate(); 
             }
-             
-            pathTraversalCompleteEvent.Invoke();
-            IsMoving = false;
-            
+
+            path.RemoveFirst();
+            target.GetComponent<SpriteRenderer>().color = Color.green;
         }
+
+        pathTraversalCompleteEvent.Invoke();
+        IsMoving = false;
     }
+
+
 
     #endregion
 }

@@ -45,12 +45,12 @@ public class GraphBuilder : MonoBehaviour
         }
 
 
-        Waypoint myStartNode = new Waypoint();
+        Waypoint myStartNode ;
         myStartNode = GameObject.FindGameObjectWithTag("Start").GetComponent<Waypoint>();
 
         // add nodes (all waypoints, including start and end) to graph
 
-        Waypoint myEndNode = new Waypoint();
+        Waypoint myEndNode ;
         myEndNode = GameObject.FindGameObjectWithTag("End").GetComponent<Waypoint>();
 
         var wayPointsOther = GameObject.FindGameObjectsWithTag("Waypoint");
@@ -75,16 +75,18 @@ public class GraphBuilder : MonoBehaviour
 //            node.AddNeighbor(node,node.GetEdgeWeight(node));
         }
       
+        foreach (var node in graph.Nodes)
+        {
+            Debug.Log($"Node: {node.Value} has {node.Neighbors.Count} neighbors");
+        }
+
         traveler.Search(myStartNode, myEndNode,graph);
+        Debug.Log("awake finished graphbuilder");
     
         
         
     }
 
-    private void Update()
-    {
-        traveler.MoveToStart();
-    }
 
 
     private void CheckNodesDistance(GraphNode<Waypoint> node)
@@ -95,6 +97,8 @@ public class GraphBuilder : MonoBehaviour
             if (node != node2 && Mathf.Abs(distance.x) <= 3.5 && Mathf.Abs(distance.y) <= 3.0)
             {
                 node.AddNeighbor(node2, distance.magnitude);
+                Debug.Log($"Connected {node.Value} -> {node2.Value} with weight {distance.magnitude}");
+
             }
         }
     }
