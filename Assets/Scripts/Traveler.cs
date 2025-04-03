@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 //using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -25,6 +26,7 @@ public class Traveler : MonoBehaviour
 
     #region Constructor
 
+    private bool IsMoving;
     // Uncomment the code below after you copy this class into the console
     // app for the automated grader. DON'T uncomment it now; it won't
     // compile in a Unity project
@@ -36,11 +38,12 @@ public class Traveler : MonoBehaviour
     /// use a constructor; this constructor is to support automated grading
     /// </summary>
     /// <param name="gameObject">the game object the script is attached to</param>
-  /*  public Traveler(GameObject gameObject) :
-        base(gameObject)
-    {
-    }
-*/
+    /*  public Traveler(GameObject gameObject) :
+          base(gameObject)
+      {
+      }
+  */
+
     #endregion
 
 
@@ -71,18 +74,17 @@ public class Traveler : MonoBehaviour
 
     public void Start()
     {
-       
-        rigidbody2D=GetComponent<Rigidbody2D>();
+        rigidbody2D = GetComponent<Rigidbody2D>();
     }
+
 
     public void MoveToStart()
     {
-        if (path != null)
+        if (path != null && IsMoving == false)
         {
+            IsMoving = true;
             FollowPath(path);
         }
-      
-        
     }
 
     #endregion
@@ -207,6 +209,7 @@ public class Traveler : MonoBehaviour
 
                 foreach (GraphNode<Waypoint> neighborNode in currentGraphNode.Neighbors)
                 {
+                    Debug.Log("check neightbor "+ neighborNode.Value);
                     // If the neighbor is still in the search list (use the 
                     // dictionary to check this)
 
@@ -285,15 +288,16 @@ public class Traveler : MonoBehaviour
             previous = previous.Previous;
         }
 
-         ExplodeFlags(path);
+        ExplodeFlags(path);
+        print(path.Count);
+        Debug.Log("path is"+path);
         return path;
     }
 
     private void ExplodeFlags(LinkedList<Waypoint> path)
     {
-       
         Explosion explosionPrefab = Resources.Load<Explosion>("Explosion");
-   
+
         var current = path.First?.Next;
         var last = path.Last;
 
@@ -302,7 +306,7 @@ public class Traveler : MonoBehaviour
             Waypoint flag = current.Value;
 
             Explosion explosion = Instantiate(explosionPrefab, flag.transform.position, Quaternion.identity);
-            
+
             Destroy(flag.gameObject);
 
             current = current.Next;
@@ -310,32 +314,31 @@ public class Traveler : MonoBehaviour
     }
 
 
-
     private void FollowPath(LinkedList<Waypoint> path)
     {
-        if (path != null && path.Count > 0)
+        if (path != null && IsMoving == true)
         {
-            
-      
-        Waypoint target = path.First.Value;
-        Vector2 targetpos = target.transform.position;
-        float speed = 2f;
-        rigidbody2D.MovePosition(Vector2.MoveTowards(transform.position, targetpos, speed * Time.deltaTime));
-        if (Vector2.Distance(transform.position, targetpos) < 0.1f)
-        {
-            path.RemoveFirst();
-
-
-            target.GetComponent<SpriteRenderer>().color = Color.green;
-
-
-            if (path.Count == 0)
+            while (path.Count > 0)
             {
-                pathTraversalCompleteEvent.Invoke();
-                
-                
+                Waypoint target = path.First.Value;
+                Vector2 targetpos = target.transform.position;
+                float speed = 2f;
+                rigidbody2D.MovePosition(Vector2.MoveTowards(transform.position, targetpos, speed * Time.deltaTime));
+                if (Vector2.Distance(transform.position, targetpos) < 0.1f)
+                {
+                    path.RemoveFirst();
+
+
+                    target.GetComponent<SpriteRenderer>().color = Color.green;
+
+
+                   
+                }
             }
-        }
+             
+            pathTraversalCompleteEvent.Invoke();
+            IsMoving = false;
+            
         }
     }
 

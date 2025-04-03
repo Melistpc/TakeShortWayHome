@@ -76,12 +76,16 @@ public class GraphBuilder : MonoBehaviour
         }
       
         traveler.Search(myStartNode, myEndNode,graph);
-        traveler.MoveToStart();
+    
         
         
     }
 
-   
+    private void Update()
+    {
+        traveler.MoveToStart();
+    }
+
 
     private void CheckNodesDistance(GraphNode<Waypoint> node)
     {
