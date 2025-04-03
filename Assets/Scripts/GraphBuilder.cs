@@ -79,6 +79,7 @@ public class GraphBuilder : MonoBehaviour
         {
             Debug.Log($"Node: {node.Value} has {node.Neighbors.Count} neighbors");
         }
+        Debug.Log("Graph built! Searching for a path...");
 
         traveler.Search(myStartNode, myEndNode,graph);
         Debug.Log("awake finished graphbuilder");
