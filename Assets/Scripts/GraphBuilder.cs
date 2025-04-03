@@ -23,11 +23,10 @@ public class GraphBuilder : MonoBehaviour
     /// use a constructor; this constructor is to support automated grading
     /// </summary>
     /// <param name="gameObject">the game object the script is attached to</param>
-    //public GraphBuilder(GameObject gameObject) :
-    //    base(gameObject)
-    //{
-    //}
-
+   /* public GraphBuilder(GameObject gameObject) : base(gameObject)
+    {
+    }
+*/
     #endregion
 
     /// <summary>

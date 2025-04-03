@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
+//using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Events;
+
 
 /// <summary>
 /// A traveler
@@ -35,11 +36,11 @@ public class Traveler : MonoBehaviour
     /// use a constructor; this constructor is to support automated grading
     /// </summary>
     /// <param name="gameObject">the game object the script is attached to</param>
-    //public Traveler(GameObject gameObject) :
-    //    base(gameObject)
-    //{
-    //}
-
+  /*  public Traveler(GameObject gameObject) :
+        base(gameObject)
+    {
+    }
+*/
     #endregion
 
 
