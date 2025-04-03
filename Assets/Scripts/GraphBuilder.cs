@@ -75,7 +75,9 @@ public class GraphBuilder : MonoBehaviour
             CheckNodesDistance(node);
 //            node.AddNeighbor(node,node.GetEdgeWeight(node));
         }
+      
         traveler.Search(myStartNode, myEndNode,graph);
+        traveler.MoveToStart();
         
         
     }

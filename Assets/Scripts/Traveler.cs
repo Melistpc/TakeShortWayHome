@@ -70,18 +70,18 @@ public class Traveler : MonoBehaviour
 
     public void Start()
     {
-        if (pathLength != 0)
-        {
-            MoveToStart();
-        }
        
         rigidbody2D=GetComponent<Rigidbody2D>();
     }
 
-    private void MoveToStart()
+    public void MoveToStart()
     {
-       // rigidbody2D.velocity = Vector2.zero;
-        FollowPath(path);
+        if (path != null)
+        {
+            FollowPath(path);
+        }
+      
+        
     }
 
     #endregion
