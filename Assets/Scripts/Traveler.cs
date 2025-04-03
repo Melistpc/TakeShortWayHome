@@ -14,6 +14,7 @@ public class Traveler : MonoBehaviour
     // needed for the PathLength property
     float pathLength = 0;
 
+    private LinkedList<Waypoint> path;
     // events fired by class
     PathFoundEvent pathFoundEvent = new PathFoundEvent();
     PathTraversalCompleteEvent pathTraversalCompleteEvent = new PathTraversalCompleteEvent();
@@ -70,15 +71,17 @@ public class Traveler : MonoBehaviour
 
     public void Start()
     {
-       // MoveToStart(startNode);
+       // Search();
+        MoveToStart();
         GetComponent<Rigidbody2D>();
     }
 
- /*   private void MoveToStart(GraphNode<Waypoint> graphNode)
+    private void MoveToStart()
     {
-        gameObject.transform.position = graphNode.position;
+        
         rigidbody2D.velocity = Vector2.zero;
-    }*/
+        FollowPath(path);
+    }
 
     #endregion
 
@@ -213,7 +216,7 @@ public class Traveler : MonoBehaviour
                 // of the edge from the current graph node to the current 
                 // neighbor in a variable
 
-                float distance = currentGraphNode + currentGraphNode.GetEdgeWeight(neighborNode);
+                float distance = currentSearchNode.Distance + currentGraphNode.GetEdgeWeight(neighborNode);
                 // Retrieve the neighor search node from the dictionary
                 // using the neighbor graph node
                 SearchNode<Waypoint> neighborSearchNode = nodeDictionary[neighborNode];
@@ -281,6 +284,33 @@ public class Traveler : MonoBehaviour
         }
 
         return path;
+    }
+
+
+    private LinkedList<Waypoint> FollowPath( LinkedList<Waypoint> path){
+          
+         Waypoint target=path.First.Value;
+         Vector2 targetpos=target.transform.position;
+         float speed=2f;
+           rigidbody2D.MovePosition(Vector2.MoveTowards(transform.position, targetpos, speed * Time.deltaTime)); 
+         if (Vector2.Distance(transform.position, targetpos) < 0.1f)
+            {
+                
+                path.RemoveFirst();
+
+                
+                target.GetComponent<SpriteRenderer>().color = Color.green;
+
+            
+                if (path.Count == 0)
+                {
+                    pathTraversalCompleteEvent.Invoke(); 
+                }
+            }
+
+
+
+         return path;
     }
 
     #endregion
