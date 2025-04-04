@@ -83,6 +83,9 @@ public class GraphBuilder : MonoBehaviour
 
         traveler.Search(myStartNode, myEndNode,graph);
         Debug.Log("awake finished graphbuilder");
+        
+        Debug.Log(Graph.ToString());
+
     
         
         
@@ -101,7 +104,7 @@ public class GraphBuilder : MonoBehaviour
         foreach (GraphNode<Waypoint> node2 in graph.Nodes)
         {
             Vector2 distance = GetDistance(node, node2);
-            if (node != node2 && Mathf.Abs(distance.x) <= 3.5 && Mathf.Abs(distance.y) <= 3.0)
+            if (node != node2 && Mathf.Abs(distance.x) <= 3.500f && Mathf.Abs(distance.y) <= 3.000f)
             {
                 node.AddNeighbor(node2, distance.magnitude);
 

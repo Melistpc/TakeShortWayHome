@@ -186,7 +186,7 @@ public class Traveler : MonoBehaviour
                 // Display the distance for the current search node as the path 
 // length in the scene (Hint: I used the HUD and the event 
 // system to do this)
-                Debug.Log($"Path found! Distance: {currentSearchNode.Distance}");
+              
 
 // Return a linked list of the waypoints from the start node to 
 // the end node. Uncomment the line of code below, replacing
@@ -195,9 +195,12 @@ public class Traveler : MonoBehaviour
 //   return BuildWaypointPath(currentSearchNode);
 
                 path = BuildWaypointPath(currentSearchNode);
+                Debug.Log($"Path found! Distance: {currentSearchNode.Distance}");
                 //pathforexplode = BuildWaypointPath(currentSearchNode);
                 MoveToStart();
+                Debug.Log($"path length: {pathLength}");
                 return path;
+               
             }
 
             // For each of the current graph node's neighbors

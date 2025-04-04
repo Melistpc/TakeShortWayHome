@@ -42,7 +42,7 @@ public class SortedLinkedList<T> : LinkedList<T> where T : IComparable
             return;
         }
 
-        if (currentNode.Value.CompareTo(item) < 0) //  current itemden önce geliyosa
+        if (currentNode.Value.CompareTo(item) <= 0) //  current itemden önce geliyosa
         {
             currentNode = AddLast(item);
         }
