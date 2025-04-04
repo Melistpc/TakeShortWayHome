@@ -88,6 +88,12 @@ public class GraphBuilder : MonoBehaviour
         
     }
 
+    void Start()
+    {
+        EdgeRenderer edgeRenderer =FindObjectOfType<EdgeRenderer>();
+        edgeRenderer.StopDrawingEdges();
+    }
+
 
 
     private void CheckNodesDistance(GraphNode<Waypoint> node)

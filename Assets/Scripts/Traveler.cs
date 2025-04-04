@@ -32,6 +32,7 @@ public class Traveler : MonoBehaviour
     public void Awake()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
+      
     }
 
     public void MoveToStart()
@@ -107,16 +108,13 @@ public class Traveler : MonoBehaviour
                         neighborSearchNode.Distance = distance;
                         neighborSearchNode.Previous = currentSearchNode;
                         searchList.Reposition(neighborSearchNode);
-
-                        Debug.Log(
-                            $"Updated {neighborSearchNode.GraphNode.Value}, Previous: {currentSearchNode.GraphNode.Value}");
+                        
                         pathFoundEvent.Invoke(distance);
                     }
                 }
             }
         }
-
-        Debug.LogWarning("No path found!");
+        
         return null;
     }
 
