@@ -98,7 +98,6 @@ public class GraphBuilder : MonoBehaviour
             if (node != node2 && Mathf.Abs(distance.x) <= 3.5 && Mathf.Abs(distance.y) <= 3.0)
             {
                 node.AddNeighbor(node2, distance.magnitude);
-                Debug.Log($"Connected {node.Value} -> {node2.Value} with weight {distance.magnitude}");
 
             }
         }
