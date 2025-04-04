@@ -84,7 +84,7 @@ public class Graph<T>
         else
         {
             nodes.Add(new GraphNode<T>(value));
-            Debug.Log($"Added node: {value}");
+//            Debug.Log($"Added node: {value}");
             return true;
         }
     }

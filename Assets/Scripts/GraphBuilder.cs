@@ -77,7 +77,7 @@ public class GraphBuilder : MonoBehaviour
       
         foreach (var node in graph.Nodes)
         {
-            Debug.Log($"Node: {node.Value} has {node.Neighbors.Count} neighbors");
+//            Debug.Log($"Node: {node.Value} has {node.Neighbors.Count} neighbors");
         }
         Debug.Log("Graph built! Searching for a path...");
 

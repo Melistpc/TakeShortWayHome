@@ -42,7 +42,7 @@ public class SortedLinkedList<T> : LinkedList<T> where T : IComparable
             return;
         }
 
-        if (currentNode.Value.CompareTo(item) <= 0) //  current itemden önce geliyosa
+        if (currentNode.Value.CompareTo(item) <= 0) //currentnodu un value su item den önce ise ya da eşitse
         {
             currentNode = AddLast(item);
         }
@@ -65,7 +65,7 @@ public class SortedLinkedList<T> : LinkedList<T> where T : IComparable
     {
         var traverseNextNode = First;
 
-        while (traverseNextNode != null && item.CompareTo(traverseNextNode.Value) > 0)
+        while (traverseNextNode != null && item.CompareTo(traverseNextNode.Value) > 0) //item traverse den sonra ise
         {
             traverseNextNode = traverseNextNode.Next;
         }
@@ -73,6 +73,7 @@ public class SortedLinkedList<T> : LinkedList<T> where T : IComparable
         if (traverseNextNode != null)
         {
             AddBefore(traverseNextNode, item);
+            Debug.Log($"Add {item} before: {traverseNextNode.Value}");
         }
         else
         {

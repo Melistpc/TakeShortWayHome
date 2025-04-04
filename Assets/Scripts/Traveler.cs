@@ -178,6 +178,7 @@ public class Traveler : MonoBehaviour
 // longer in the search list)
 
             nodeDictionary.Remove(currentGraphNode);
+          
 
 // If the current graph node is the end node
 
@@ -240,11 +241,14 @@ public class Traveler : MonoBehaviour
 // have moved it forward in the search list
 
                         searchList.Reposition(neighborSearchNode);
+                       
 
                         pathFoundEvent.Invoke(distance);
                     }
+                    
                 }
             }
+           // Debug.Log("Search list count" +searchList.Count);
         }
         // didn't find a path from start to end nodes
 
