@@ -40,6 +40,7 @@ public class GraphBuilder : MonoBehaviour
         if (graph == null)
         {
             traveler = FindObjectOfType<Traveler>();
+          
             Debug.Log("Graph is null");
             graph = new Graph<Waypoint>();
         }
@@ -62,6 +63,7 @@ public class GraphBuilder : MonoBehaviour
         {
             Waypoint myOtherFlag = waypoint.GetComponent<Waypoint>();
             graph.AddNode(myOtherFlag);
+            
         }
 
         graph.AddNode(myEndNode);
@@ -77,15 +79,12 @@ public class GraphBuilder : MonoBehaviour
       
         foreach (var node in graph.Nodes)
         {
-//            Debug.Log($"Node: {node.Value} has {node.Neighbors.Count} neighbors");
+            Debug.Log($"Node: {node.Value} has {node.Neighbors.Count} neighbors");
         }
         Debug.Log("Graph built! Searching for a path...");
 
         traveler.Search(myStartNode, myEndNode,graph);
         Debug.Log("awake finished graphbuilder");
-        
-        Debug.Log(Graph.ToString());
-
     
         
         
@@ -95,6 +94,7 @@ public class GraphBuilder : MonoBehaviour
     {
         EdgeRenderer edgeRenderer =FindObjectOfType<EdgeRenderer>();
         edgeRenderer.StopDrawingEdges();
+     
     }
 
 
@@ -104,7 +104,7 @@ public class GraphBuilder : MonoBehaviour
         foreach (GraphNode<Waypoint> node2 in graph.Nodes)
         {
             Vector2 distance = GetDistance(node, node2);
-            if (node != node2 && Mathf.Abs(distance.x) <= 3.500f && Mathf.Abs(distance.y) <= 3.000f)
+            if (node != node2 && Mathf.Abs(distance.x) <= 3.5 && Mathf.Abs(distance.y) <= 3.0)
             {
                 node.AddNeighbor(node2, distance.magnitude);
 

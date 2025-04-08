@@ -19,9 +19,10 @@ public class Traveler : MonoBehaviour
     PathFoundEvent pathFoundEvent = new PathFoundEvent();
     PathTraversalCompleteEvent pathTraversalCompleteEvent = new PathTraversalCompleteEvent();
     private bool IsMoving;
-
+     public LinkedList<Waypoint> explodeWaypoints;
     private Rigidbody2D rigidbody2D;
-    // private GameObject explosion;
+    private Explosion explodeprefab;
+    private GameObject explosion;
     // private Animator animator;
 
     #endregion
@@ -66,12 +67,13 @@ public class Traveler : MonoBehaviour
     public void Start()
     {
         Debug.Log("Traveler: Start");
+      
     }
 
     public void Awake()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
-        // explosion= GameObject.Find("Explosion");
+        //explodeprefab =FindObjectOfType<Explosion>();
 
         //animator = FindObjectOfType<Animator>();
     }
@@ -82,6 +84,7 @@ public class Traveler : MonoBehaviour
         {
             Debug.Log("Moving to the start");
             IsMoving = true;
+            explodeWaypoints = path;
             StartCoroutine(FollowPath(path));
         }
     }
@@ -196,10 +199,10 @@ public class Traveler : MonoBehaviour
 //   return BuildWaypointPath(currentSearchNode);
 
                 path = BuildWaypointPath(currentSearchNode);
-                Debug.Log($"Path found! Distance: {currentSearchNode.Distance}");
-                //pathforexplode = BuildWaypointPath(currentSearchNode);
+               // Debug.Log($"Path found! Distance: {currentSearchNode.Distance}");
+                
                 MoveToStart();
-                Debug.Log($"path length: {pathLength}");
+                Debug.Log($"path length: {pathLength} and count: {path.Count}");
                 return path;
                
             }
@@ -283,10 +286,12 @@ public class Traveler : MonoBehaviour
         Debug.Log($"Final path length: {path.Count}");
         return path;
     }
+    
 
     private IEnumerator FollowPath(LinkedList<Waypoint> path)
     {
         IsMoving = true;
+       
         while (path.Count > 0)
         {
             Waypoint target = path.First.Value;
@@ -304,6 +309,12 @@ public class Traveler : MonoBehaviour
         }
 
         pathTraversalCompleteEvent.Invoke();
+        foreach (Waypoint waypoint in explodeWaypoints)
+        {
+            Animator anim = explodeprefab.GetComponent<Animator>();
+            anim.Play("Explosion");
+        }
+       
         IsMoving = false;
        /* foreach (var node in pathforexplode)
         {
