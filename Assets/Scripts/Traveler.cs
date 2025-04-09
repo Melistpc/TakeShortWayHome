@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -15,7 +16,7 @@ public class Traveler : MonoBehaviour
 
     float pathLength = 0;
     private LinkedList<Waypoint> path;
-    //private LinkedList<Waypoint> pathforexplode;
+   
     PathFoundEvent pathFoundEvent = new PathFoundEvent();
     PathTraversalCompleteEvent pathTraversalCompleteEvent = new PathTraversalCompleteEvent();
     private bool IsMoving;
@@ -23,7 +24,7 @@ public class Traveler : MonoBehaviour
     private Rigidbody2D rigidbody2D;
     private Explosion explodeprefab;
     private GameObject explosion;
-    // private Animator animator;
+   
 
     #endregion
 
@@ -66,16 +67,19 @@ public class Traveler : MonoBehaviour
     /// </summary>
     public void Start()
     {
-        Debug.Log("Traveler: Start");
+        
+            Debug.Log("Traveler: Start");
+            Waypoint startNode = GameObject.FindGameObjectWithTag("Start").GetComponent<Waypoint>();
+            Waypoint endNode = GameObject.FindGameObjectWithTag("End").GetComponent<Waypoint>();
+            Search(startNode, endNode, GraphBuilder.Graph);
+            
       
     }
 
     public void Awake()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
-        //explodeprefab =FindObjectOfType<Explosion>();
 
-        //animator = FindObjectOfType<Animator>();
     }
 
     public void MoveToStart()
@@ -86,6 +90,7 @@ public class Traveler : MonoBehaviour
             IsMoving = true;
             explodeWaypoints = path;
             StartCoroutine(FollowPath(path));
+           
         }
     }
 
@@ -199,8 +204,6 @@ public class Traveler : MonoBehaviour
 //   return BuildWaypointPath(currentSearchNode);
 
                 path = BuildWaypointPath(currentSearchNode);
-               // Debug.Log($"Path found! Distance: {currentSearchNode.Distance}");
-                
                 MoveToStart();
                 Debug.Log($"path length: {pathLength} and count: {path.Count}");
                 return path;
@@ -244,9 +247,9 @@ public class Traveler : MonoBehaviour
 // have moved it forward in the search list
 
                         searchList.Reposition(neighborSearchNode);
-                       
-
                         pathFoundEvent.Invoke(distance);
+                     
+                        
                     }
                     
                 }
@@ -254,9 +257,24 @@ public class Traveler : MonoBehaviour
            // Debug.Log("Search list count" +searchList.Count);
         }
         // didn't find a path from start to end nodes
+        Debug.Log("search list"+TurnListToString(searchList) );
 
         return null;
     }
+
+   
+    private string TurnListToString(SortedLinkedList<SearchNode<Waypoint>> searchList)
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        foreach (var searchNode in searchList)
+        {
+            stringBuilder.AppendLine(searchNode.ToString());
+        }
+        //Debug.Log("Search List  "+stringBuilder);
+        return stringBuilder.ToString();
+        
+    }
+    
 
     #endregion
 

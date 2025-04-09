@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class GraphBuilder : MonoBehaviour
 {
-     static Graph<Waypoint> graph;
+    static Graph<Waypoint> graph;
 
     #region Constructor
 
@@ -23,10 +23,8 @@ public class GraphBuilder : MonoBehaviour
     /// use a constructor; this constructor is to support automated grading
     /// </summary>
     /// <param name="gameObject">the game object the script is attached to</param>
-   /* public GraphBuilder(GameObject gameObject) : base(gameObject)
-    {
-    }
-*/
+  
+
     #endregion
 
     /// <summary>
@@ -34,24 +32,22 @@ public class GraphBuilder : MonoBehaviour
     ///
     /// Note: Leave this method public to support automated grading
     /// </summary>
-    private Traveler traveler;
     public void Awake()
     {
         if (graph == null)
         {
-            traveler = FindObjectOfType<Traveler>();
-          
             Debug.Log("Graph is null");
             graph = new Graph<Waypoint>();
         }
 
 
-        Waypoint myStartNode ;
+        Waypoint myStartNode;
         myStartNode = GameObject.FindGameObjectWithTag("Start").GetComponent<Waypoint>();
+
 
         // add nodes (all waypoints, including start and end) to graph
 
-        Waypoint myEndNode ;
+        Waypoint myEndNode;
         myEndNode = GameObject.FindGameObjectWithTag("End").GetComponent<Waypoint>();
 
         var wayPointsOther = GameObject.FindGameObjectsWithTag("Waypoint");
@@ -61,53 +57,52 @@ public class GraphBuilder : MonoBehaviour
 
         foreach (var waypoint in wayPointsOther)
         {
-            Waypoint myOtherFlag = waypoint.GetComponent<Waypoint>();
-            graph.AddNode(myOtherFlag);
-            
+            graph.AddNode(waypoint.GetComponent<Waypoint>());
         }
 
         graph.AddNode(myEndNode);
-        Debug.Log("My node list" + graph.Nodes + " count " + graph.Count);
-
+        
 
         // add neighbors to each node in graph
-        foreach (var node in graph.Nodes)
+        if (graph.Nodes.Count == 2 && graph.Nodes[0].Equals(myStartNode) && graph.Nodes[1].Equals(myEndNode))
         {
-            CheckNodesDistance(node);
-//            node.AddNeighbor(node,node.GetEdgeWeight(node));
+            float distance=Mathf.Abs(GetDistance(graph.Nodes[0], graph.Nodes[1]).magnitude);
+            graph.Nodes[0].AddNeighbor(graph.Nodes[1],distance);
+            graph.Nodes[1].AddNeighbor(graph.Nodes[0],distance);
+            
         }
-      
-        foreach (var node in graph.Nodes)
+        else
         {
-            Debug.Log($"Node: {node.Value} has {node.Neighbors.Count} neighbors");
-        }
-        Debug.Log("Graph built! Searching for a path...");
-
-        traveler.Search(myStartNode, myEndNode,graph);
-        Debug.Log("awake finished graphbuilder");
-    
-        
-        
-    }
-
-    void Start()
-    {
-        EdgeRenderer edgeRenderer =FindObjectOfType<EdgeRenderer>();
-        edgeRenderer.StopDrawingEdges();
-     
-    }
-
-
-
-    private void CheckNodesDistance(GraphNode<Waypoint> node)
-    {
-        foreach (GraphNode<Waypoint> node2 in graph.Nodes)
-        {
-            Vector2 distance = GetDistance(node, node2);
-            if (node != node2 && Mathf.Abs(distance.x) <= 3.5 && Mathf.Abs(distance.y) <= 3.0)
+            foreach (var node in graph.Nodes)
             {
-                node.AddNeighbor(node2, distance.magnitude);
+           
+                CheckNodesDistance(node);
+            
+            }
 
+        }
+     
+
+      
+        Debug.Log("awake finished graphbuilder");
+    }
+
+    private void CheckNodesDistance(GraphNode<Waypoint> firstNode)
+    {
+        
+        foreach (GraphNode<Waypoint> secondNode in graph.Nodes)
+        {
+            if (secondNode != firstNode)
+            {
+                Vector2 distance = GetDistance(firstNode, secondNode);
+                if (Mathf.Abs(distance.x) <= 3.5f && Mathf.Abs(distance.y) <= 3.0f)
+                {
+                    firstNode.AddNeighbor(secondNode, distance.magnitude);
+                }
+                //Diyelim ki sadece 2 node var biri star diğeri end.ikisi arasında distance daha büyük olsa
+                //bunu almıycak bu case i ekle.
+                
+                
             }
         }
     }
@@ -116,8 +111,9 @@ public class GraphBuilder : MonoBehaviour
     {
         Vector2 currentNodePos = node.Value.Position;
         Vector2 otherNodePos = node2.Value.Position;
-        return new Vector2((currentNodePos.x - otherNodePos.x), (currentNodePos.y - otherNodePos.y));
+        return currentNodePos - otherNodePos;
     }
+
 
     /// <summary>
     /// Gets and sets the graph
