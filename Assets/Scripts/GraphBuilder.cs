@@ -63,15 +63,19 @@ public class GraphBuilder : MonoBehaviour
         graph.AddNode(myEndNode);
         
 
+        
         // add neighbors to each node in graph
-        if (graph.Nodes.Count == 2 && graph.Nodes[0].Equals(myStartNode) && graph.Nodes[1].Equals(myEndNode))
+        if (graph.Nodes.Count == 2 && graph.Nodes[0].Value==myStartNode && graph.Nodes[1].Value==myEndNode)
         {
+        
             float distance=Mathf.Abs(GetDistance(graph.Nodes[0], graph.Nodes[1]).magnitude);
+            Debug.Log("only start and end" + distance);
             graph.Nodes[0].AddNeighbor(graph.Nodes[1],distance);
             graph.Nodes[1].AddNeighbor(graph.Nodes[0],distance);
             
         }
-        else
+   
+        else 
         {
             foreach (var node in graph.Nodes)
             {
